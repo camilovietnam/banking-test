@@ -6,6 +6,6 @@ Our partner bank Gold&Gold has sent us a requirement for a new microservice to m
 - Check the account balance
 - Deposit money into the account
 - Withdraw money from the account
-- Reset the balance to zero
+- Reset the account balance
 
-Please create a Go program to implement this API. We expect no unusual parameters from the customer (for example, they will only send integers to the "deposit" endpoint). ß∂sdsdsd
+Please create a Go program to implement this API. We expect no unusual parameters from the customer (for example, they will only send integers to the "deposit" endpoint). 
