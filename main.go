@@ -1,19 +1,32 @@
 package main
 
-// Accountable provides a simple interface for keeping track of a bank account.
-// TODO: Implement the interface so that it can be used inside http handlers to perform account operations
-// TODO: Implement the endpoints provided in the main function
-type Accountable interface {
-	Deposit(int)
-	Withdraw(int)
-	Balance() int
-	Reset()
-}
+import (
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/camilovietnam/banking-test/handlers"
+	"github.com/camilovietnam/banking-test/types"
+	"github.com/go-chi/chi/v5"
+)
 
 func main() {
-	// TODO: implement the following endpoints. Use the HTTP verbs you consider adequate.
-	// /account/reset
-	// /account/deposit/{amount}
-	// /account/withdraw/{amount}
-	// /account/balance
+
+	account := types.NewAccount()
+	r := chi.NewRouter()
+
+	r.Get("/account/balance", handlers.Balance(account))
+	r.Post("/account/reset", handlers.Reset(account))
+	r.Post("/account/deposit/{amount}", handlers.Deposit(account))
+	r.Post("/account/withdraw/{amount}", handlers.Withdraw(account))
+
+	server := http.Server{
+		Addr:    "localhost:8080",
+		Handler: r,
+	}
+
+	fmt.Println("[👉] Server started in port 8080 ")
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal("server could not start: ", err)
+	}
 }

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/camilovietnam/banking-test/handlers"
 	"io"
 	"net/http"
 	"sync"
@@ -18,7 +20,7 @@ var (
 )
 
 func TestOneHundredDeposits(t *testing.T) {
-	http.Get(resetURL)
+	res, err := http.Post(resetURL, "application/json", nil)
 
 	var wg sync.WaitGroup
 	wg.Add(totalRequests)
@@ -32,7 +34,7 @@ func TestOneHundredDeposits(t *testing.T) {
 
 	wg.Wait()
 
-	res, err := http.Get(balanceURL)
+	res, err = http.Get(balanceURL)
 	if err != nil {
 		t.Fatal("http error: ", err)
 	}
@@ -42,5 +44,12 @@ func TestOneHundredDeposits(t *testing.T) {
 		t.Fatal("read error: ", err)
 	}
 
-	fmt.Printf("Message: %s", body)
+	var response handlers.HttpResponse
+	if err = json.Unmarshal(body, &response); err != nil {
+		t.Fatal("could not unmarshal response", err)
+	}
+
+	if response.Balance != totalRequests {
+		t.Fatalf("Incorrect balance - Got: %d, Expected: %d", response.Balance, totalRequests)
+	}
 }
